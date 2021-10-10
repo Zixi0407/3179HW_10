@@ -1,0 +1,114 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    
+    "width": 900,
+    "height": 500,
+    "title": "Economic Freedom Index 2019",
+    "data": {
+      "url": "https://raw.githubusercontent.com/Zixi0407/3179_testrepo/main/economic_freedom_index2019_data.csv"
+    },
+    "params": [
+      {
+        "name": "Continent_selection",
+        "bind": {
+          "input": "select",
+          "options": [
+            null,
+            "Asia-Pacific",
+            "Europe",
+            "Middle East and North Africa",
+            "Sub-Saharan Africa",
+            "Americas"
+          ],
+          "labels": [
+            "Show All",
+            "Asia-Pacific",
+            "Europe",
+            "Middle East and North Africa",
+            "Sub-Saharan Africa",
+            "Americas"
+          ],
+          "name": "Region Selection: "
+        }
+      }
+    ],
+    
+    "transform": [
+      {"filter": "datum.BusinessFreedom > 0"},
+      {"filter": "datum.LaborFreedom > 0"},
+      
+      {
+        "filter": "Continent_selection == null || datum.Region == Continent_selection"
+      }
+  
+    ],
+    "selection": {
+      "continent_highlight": {
+        "type": "multi",
+        "fields": ["Region"],
+        "bind": "legend"
+      }
+    },
+    
+    "mark": "circle",
+    "encoding": {
+      "x": {
+        "field": "BusinessFreedom",
+        "type": "quantitative",
+        "title": "Business Freedom",
+        "axis": {"tickCount": 10},
+        "scale": {"type": "linear", "domain": [10, 100]}
+      },
+      "y": {
+        "field": "LaborFreedom",
+        "type": "quantitative",
+        "axis": {"tickCount": 10},
+        "scale": {"type": "linear", "domain": [10, 100]}
+      },
+      "color": {
+        "field": "Region",
+        "type": "nominal",
+        "scale": {
+          "domain": [
+            "Asia-Pacific",
+            "Europe",
+            "Middle East and North Africa",
+            "Sub-Saharan Africa",
+            "Americas"
+          ],
+          "range": [
+            "#e41a1c",
+            "#984ea3",
+            "#ff7f00",
+            "#a6cee3",
+            "#377eb8",
+            "#a65628"
+          ]
+        }
+      },
+      "opacity": {
+        "condition": {"selection": "continent_highlight", "value": 0.6},
+        "value": 0.2
+      },
+      "size": {
+        "field": "2019Score",
+        "type": "quantitative",
+        "scale": {
+          "type": "threshold",
+          "domain": [20, 40, 50,55,60,65,70,75,80,85,90,100],
+          "range": [10, 40, 80, 130, 240,360, 490,600,700,800,1000,1200]
+        },
+        "legend": {"format": ".1s"}
+      },
+      "tooltip": [
+        {"field": "Country", "type": "nominal"},
+        {"field": "BusinessFreedom", "type": "quantitative", "format": ","},
+        {"field": "LaborFreedom", "type": "quantitative", "format": ","},
+        {
+          "field": "2019Score",
+          "type": "quantitative",
+          "format": ".2f"
+        }
+      ]
+    }
+  }
